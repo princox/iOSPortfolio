@@ -76,7 +76,106 @@ https://www.hooni.net/xe/freetalk/65106
 - 통화가 다른 두 금액을 더해서 주어진 환율에 맞게 변한 금액을 결과로 얻을 수 있어야 한다.
 - 어떤 금액(주가)을 어떤 수(주식)에 곱한 금액을 결과로 얻을 수 있어야 한다.
 
+테스트를 작성하기 전에 살펴 볼 **현재 해야할 일** : 
+- [ ] \$5 + 10CHF = $10 (환율이 2:1일 경우)
+- [ ] \$5 * 2 = $10
+- [ ] amount를 private로 만들기
+- [ ] Dollar 부작용? Money 반올림? (이건 나중에)
 
+
+테스트를 작성할 때는 작은 것부터 시작해야하고, 오퍼레이션의 완벽한 인터페이스에 대해 상상해보는 것이 좋다.
+
+간단한 곱셈의 예)
+```java
+public void testMultiplication(){
+	Dollar five = new Dollar(5);
+	five.times(2);
+	assertEquals(10, five.amount);
+}
+```
+이와 같은 코드는 public field에 예기치 못한 부작용이 있을 수 있지만, 먼저 작은 것부터 시작하고 우선 초록 막대를 띄우는 것으로 시작한다.
+
+
+
+이렇게 테스트를 작성하면 다음 4가지의 오류가 뜬다.
+- Dollar 클래스가 없음 (위는 테스트 코드이므로 내 원본 코드에는 현재 아무 것도 작성되어 있지 않는다.)
+- 생성자가 없음
+- times(int) 메소드가 없음
+- amount 필드가 없음
+
+이는 다음 4단계를 통해 모두 없앨 수 있다.
+
+```java
+// 클래스 생성
+class Dollar
+
+// 생성자 생성
+Dollar(int amount) {
+}
+
+// times 스텁(stub)생성
+// stub이란, 테스트 코드가 간신히 컴파일만 될 수 있을 정도로 껍데기만 만드는 것을 말한다.
+void times(int multiplier) {
+}
+
+// amount 필드 추가
+int amount;
+```
+
+이렇게 할 경우 amount가 10이 아니라 0으로 뜨기 때문에 우리가 예상했던 결과와 다르게 나온다. 초록색을 띄우기 위해서 10을 강제할당한다.
+
+```java
+int amount = 10;
+```
+
+이런 식으로 진행한다.
+
+이제 중복을 제거한다. (리팩토링)
+우리가 할 일에 적어둔 10은 다른 어딘가에서 넘어온 10이므로 times() 메소드 안에 정의하여 중복을 없애도록 한다.
+
+```java
+int amount;
+
+void times(int multiplier) {
+	amount = 5 * 2;
+}
+```
+
+계속 중복을 제거하자면, 저기에서 5는 생성자에서 넘어온 것으로 볼 수 있기 때문에 이걸 다음과 같이 amount 변수에 저장하면,
+
+```java
+Dollar(int amount) {
+	this.amount = amount;
+}
+```
+
+그걸 time에서 사용할 수 있다.
+
+```java
+int amount;
+
+void times(int multiplier) {
+	amount = amount * 2;
+}
+```
+
+여기서 인자(parameter) multiplier값이 2 이므로 상수를 이 인자로 대체한다.
+
+```java
+int amount;
+
+void times(int multiplier) {
+	// 이것은 amount *= multiplier로 쓸 수 있다.
+	amount = amount * multiplier;
+	
+}
+```
+
+이렇게 되면 1개의 할 일이 마무리 된다.
+- [ ]  \$5 + 10CHF = $10 (환율이 2:1일 경우)
+- [x]  \$5 * 2 = $10
+- [ ] amount를 private로 만들기
+- [ ] Dollar 부작용? Money 반올림? (이건 나중에)
 
 
 ### 메모리 관리
