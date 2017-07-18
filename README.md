@@ -12,12 +12,14 @@
 - [ ] Parse
 - [ ] How to do TDD with Xcode (Testing tool practice)
 - [ ] Protocol, Initialization, Extension 복습
-- [ ] 
-http://swift.leantra.kr/#initialization
+- [ ] http://swift.leantra.kr/#initialization
 
 면접질문 : 
 https://soooprmx.com/archives/6442
+
 https://www.hooni.net/xe/freetalk/65106
+
+***
 
 ### Test-Driven Development (Kent Beck)
 **테스트 주도 개발의 2가지 원칙** :  
@@ -178,6 +180,12 @@ void times(int multiplier) {
 - [ ] Dollar 부작용? Money 반올림? (이건 나중에)
 
 
+***
+
+
+
+
+
 ### 메모리 관리
 #### ARC
 https://www.raywenderlich.com/134411/arc-memory-management-swift
@@ -186,12 +194,17 @@ http://njir.github.io/2015/03/19/memori-gwanriarc/index.html
 https://medium.com/@enricopiovesan/arc-swift-tutorial-d42dea53eddb
 https://stackoverflow.com/questions/31346518/how-to-work-with-automatic-reference-counting-arc
 
+***
+
 #### Weak, strong, unowned
 https://krakendev.io/blog/weak-and-unowned-references-in-swift
 
+***
 
 ### Core image
 #### Image crop app
+
+***
 
 ### Core data
 #### Shopping wish list app
@@ -216,9 +229,12 @@ NS Managed Objects를 database로 보낼 때 부르는 함수이다.
 7. 관련 메소드
 awakeFromInsert() - entity에서 해당 아이템을 생성하면 이 함수가 불려진다.
 
+***
 
 ### TDD practice
 #### Making calculator app with Test-Driven Development (TDD)
+
+***
 
 ### 객체지향 프로그래밍
 #### **Setter, Getter 이유**
@@ -235,6 +251,9 @@ http://qna.iamprogrammer.io/t/encapsulation-getter-setter/193
 - 상속성
 - 다형성
 
+
+***
+
 ### Protocol, Initialization, Extension
 #### Protocol
 
@@ -248,6 +267,8 @@ http://qna.iamprogrammer.io/t/encapsulation-getter-setter/193
 >**NOTE**: 저장 속성에 기본값을 지정하거나, 이니셜라이저에서 초기값을 설정할 때, 어떠한 속성 감시자(observer)도 호출하지 않고 속성의 값이 직접 설정 됩니다.
 
 가장 기본적인 형태로 `init` 키워드를 사용하며, 파라메터가 없는 인스턴스 메소드의 형태입니다. 밑의 예제는 `Fahrenheit` 
+
+***
 
 
 ### Xcode 단축키
