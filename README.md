@@ -1,4 +1,4 @@
-##iOS portfolio for developer position
+## iOS portfolio for developer position
 
 
 >**Note:** Hi, my name is `Jeong Hoon Rhee`. I'm making some apps for my portfolio.
@@ -12,13 +12,14 @@
 - [ ] Parse
 - [ ] How to do TDD with Xcode (Testing tool practice)
 - [ ] Protocol, Initialization, Extension 복습
+- [ ] 
 http://swift.leantra.kr/#initialization
 
 면접질문 : 
 https://soooprmx.com/archives/6442
 https://www.hooni.net/xe/freetalk/65106
 
-###Test-Driven Development (Kent Beck)
+### Test-Driven Development (Kent Beck)
 **테스트 주도 개발의 2가지 원칙** :  
 - 오직 자동화된 테스트가 실패할 경우만 새로운 코드를 작성한다.
 - 중복을 제거한다. 
@@ -47,11 +48,14 @@ https://www.hooni.net/xe/freetalk/65106
 다중 통화를 지원하는 Money 객체부터 시작한다.
 
 다음과 같은 보고서가 있다고 하자.
+
 | 종목  |  주 |  가격 |  합계 |
-|:-|-:|-:|-:|
+|:--|--:|--:|--:|
 |  IBM | 1000  | 25  | 25000  |
 | GE  | 400  | 100 | 40000  |
 |   |   | 합계  |  65000 |
+
+
 
 다중 통화를 지원하는 보고서를 만들려면 통화 단위를 추가해야한다.
 
@@ -75,23 +79,23 @@ https://www.hooni.net/xe/freetalk/65106
 
 
 
-###메모리 관리
-####ARC
+### 메모리 관리
+#### ARC
 https://www.raywenderlich.com/134411/arc-memory-management-swift
 https://developer.apple.com/library/content/documentation/Swift/Conceptual/Swift_Programming_Language/AutomaticReferenceCounting.html
 http://njir.github.io/2015/03/19/memori-gwanriarc/index.html
 https://medium.com/@enricopiovesan/arc-swift-tutorial-d42dea53eddb
 https://stackoverflow.com/questions/31346518/how-to-work-with-automatic-reference-counting-arc
 
-####Weak, strong, unowned
+#### Weak, strong, unowned
 https://krakendev.io/blog/weak-and-unowned-references-in-swift
 
 
-###Core image
-####Image crop app
+### Core image
+#### Image crop app
 
-###Core data
-####Shopping wish list app
+### Core data
+#### Shopping wish list app
 1. project 생성 -> use core data -> 프로젝트명.xcdatamodeld 파일 확인
 
 2. Appdelegate.swift에 2가지 함수를 확인
@@ -114,10 +118,10 @@ NS Managed Objects를 database로 보낼 때 부르는 함수이다.
 awakeFromInsert() - entity에서 해당 아이템을 생성하면 이 함수가 불려진다.
 
 
-###TDD practice
-####Making calculator app with Test-Driven Development (TDD)
+### TDD practice
+#### Making calculator app with Test-Driven Development (TDD)
 
-###객체지향 프로그래밍
+### 객체지향 프로그래밍
 #### **Setter, Getter 이유**
 http://qna.iamprogrammer.io/t/encapsulation-getter-setter/193
 #### 원칙 5가지
@@ -132,10 +136,10 @@ http://qna.iamprogrammer.io/t/encapsulation-getter-setter/193
 - 상속성
 - 다형성
 
-###Protocol, Initialization, Extension
-####Protocol
+### Protocol, Initialization, Extension
+#### Protocol
 
-####Initialization
+#### Initialization
 초기화는 클래스, 구조체, 또는 열거형의 인스턴스를 사용하기 위한 준비 과정입니다. 이 과정은 해당 인스턴스의 각각의 저장된 속성의 초기값을 설정하는 것과 그 외의 다른 설정 또는 새 인스턴스를 사용하기 전에 필요한 초기화를 합니다. 이 초기화 과정을 이니셜라이저(initializer)를 정의함으로서 구현할 수 있습니다. 이니셜라이저는 특정 타입의 새 인스턴스를 만들때 호출될 수 있는 특수 메소드입니다. 
 
 다른 오브젝티브 C의 이니셜라이저와는 달리 스위프트의 이니셜라이저는 값을 반환하지 않습니다. 이니셜라이저의 주 역할은 새 인스턴스가 처음 사용되기 전에 잘못된 곳이 없이 초기화가 되었는지 보장하는 것입니다. 또한 클래스 타입의 인스턴스는 디이니셜라이저(deinitializer)를 정의 할 수 있습니다. 디이니셜라이저는 할당 해제되기 바로 직전에 맞춤 정리를 수행합니다. 디이니셜라이저에 대해 더 많은 정보를 원하시면 Deinitialization을 보세요.
@@ -147,5 +151,5 @@ http://qna.iamprogrammer.io/t/encapsulation-getter-setter/193
 가장 기본적인 형태로 `init` 키워드를 사용하며, 파라메터가 없는 인스턴스 메소드의 형태입니다. 밑의 예제는 `Fahrenheit` 
 
 
-###Xcode 단축키
+### Xcode 단축키
 option + 클릭 -> 스토리보드 오른쪽 옆에 assistant editor 화면으로 코드가 분할하여 뜬다.
