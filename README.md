@@ -12,14 +12,12 @@
 - [ ] Parse
 - [ ] How to do TDD with Xcode (Testing tool practice)
 - [ ] Protocol, Initialization, Extension 복습
-- [ ] http://swift.leantra.kr/#initialization
+- [ ] 
+http://swift.leantra.kr/#initialization
 
 면접질문 : 
 https://soooprmx.com/archives/6442
-
 https://www.hooni.net/xe/freetalk/65106
-
-***
 
 ### Test-Driven Development (Kent Beck)
 **테스트 주도 개발의 2가지 원칙** :  
@@ -124,7 +122,8 @@ void times(int multiplier) {
 int amount;
 ```
 
-이렇게 할 경우 amount가 10이 아니라 0으로 뜨기 때문에 우리가 예상했던 결과와 다르게 나온다. 초록색을 띄우기 위해서 10을 강제할당한다.
+이렇게 할 경우 amount가 10이 아니라 0으로 뜨기 때문에 우리가 예상했던 결과와 다르게 나온다. 
+초록색을 띄우기 위해서 10을 강제할당한다.
 
 ```java
 int amount = 10;
@@ -180,31 +179,98 @@ void times(int multiplier) {
 - [ ] Dollar 부작용? Money 반올림? (이건 나중에)
 
 
-***
-
-
-
-
-
 ### 메모리 관리
 #### ARC
+##### Apple Swift 3.1 Language Guide - Automatic Reference Counting
+http://kka7.tistory.com/21
+Swift는 앱의 메모리 사용량을 추적하기 위해서 *자동 참조 개수(ARC - Automatic Reference Counting)*를 사용한다. 대부분의 경우는 Swift에서 메모리 관리는 그냥 사용되고 메모리 관리에 대해서 생각할 필요가 없다. ARC는 인스턴스가 더 이상 필요 없을 때 클래스 인스턴스를 자동으로 메모리에서 해제하기 때문이다.
+
+하지만 몇 가지 경우에서 ARC는 메모리 관리를 위한 코드 일부와 관련있는 더 많은 정보가 필요하다. Swift에서 ARC 사용은 매우 단순하다.
+> **주의**
+> 참조 개수는 클래스의 인스턴스에만 적용된다. 구조체와 열거형은 값(value) 타입이기 때문에 참조로 저장되거나 전달되지 않는다.
+
+클래스의 새로운 인스턴스를 생성할 때 마다, ARC는 인스턴스에 관한 정보를 저장하기 위해서 메모리 덩어리(chunk)를 할당한다. 이 메모리는 인스턴스의 저장 프로퍼티(stored property)와 연관된 값과 함께 인스턴스 타입에 대한 정보를 유지한다.
+
+그뿐만 아니라 인스턴스가 더 이상 필요하지 않을 때 ARC는 메모리를 다른 목적으로 사용할 수 있도록 인스턴스에 의해 사용된 메모리를 해제한다. (클래스 인스턴스가 더 이상 필요하지 않을 때 메모리 공간을 가지지 않는 것을 보장한다.)
+
+하지만 ARC가 아직 사용하고 있는 인스턴스의 메모리를 해제할 경우 더는 인스턴스의 프로퍼티에 접근할 수 없거나 인스턴스의 메소드를 호출 할 수 없다. 이 경우에 인스턴스에 접근하려 하면 앱 크래쉬(crash)가 일어난다.
+
+필요한 인스턴스가 사라지지 않는지 확인해야 하고, ARC는 각 클래스 인스턴스에 현재 참조 중인 많은 프로퍼티, 상수, 변수를 추적한다. ARC는 인스턴스에 대해 활성화된 참조가 1개라도 있으면 메모리를 해제하지 않는다.
+
+이를 가능하게 하기 위해서 프로퍼티, 상수, 변수에 클래스 인스턴스를 할당할 때마다 그 프로퍼티, 상수, 변수는 인스턴스에 *강한 참조(strong reference)*를 만든다. 강한 참조로 호출되는 것은 인스턴스를 강하게 유지하며 강한 참조가 남아있는 경우에는 메모리를 해제하지 않는다.
+
+#### ARC in Action
+다음은 ARC 작동 방식에 대한 예제이다.
+```swift
+class Person { 
+	let name: String 
+		init(name: String) { 
+		self.name = name print("\(name) is being initialized") 
+	} 
+	deinit { 
+		print("\(name) is being deinitialized") 
+	} 
+}
+```
+`Person` 클래스는 인스턴스의 `name` 프로퍼티를 설정하고 초기화 진행 중을 나타내는 메시지를 출력하는 초기화(initializer)를 가지고 있다. 또한 `Person` 클래스는 클래스의 인스턴스가 메모리에서 해제될 때 메시지를 출력을 하는 해제(deinitializer)도 가지고 있다.
+
+다음 코드는 바로 다음 코드 일부(snippet)에서 새로운 `Person` 인스턴스에 여러 개의 참조 설정에 사용되는 `Person?` 타입의 일부를 정의한다. 이러한 변수들이 옵셔널 타입이기 때문에 자동으로 값이 nil로 초기화 되고 현재 `Person` 인스턴스를 참조하지 않는다.
+
+```swift
+var reference1: Person?
+var reference2: Person? 
+var reference3: Person?
+```
+새로운 `Person` 인스턴스를 생성하고 3개의 변수들 중 하나에 할당할 수 있습니다.
+
+```swift
+reference1 = Person(name: "John Appleseed")
+// prints "John Appleseed is being initialized"
+```
+Person 클래스의 초기화를 호출하는 시점에 John Appleseed is being initialized가 출력 된다는 것을 인식할 수 있다. 이것이 초기화가 일어났다는 것을 확인시켜준다.
+
+새로운 `Person` 인스턴스가 `reference1` 변수에 할당되기 때문에, 이제 새로운 `Person` 인스턴스에 `reference1`은 강한 참조가 된다. 강한 참조가 1개 이상이기 때문에 ARC는 `Person`이 메모리에 유지되고 할당해제 되지 않는다.
+
+두 개 이상의 변수에 동일한 `Person` 인스턴스를 할당하면 인스턴스에 두 개 이상의 강한 참조가 된다.
+```swift
+reference2 = reference1
+reference3 = reference1
+```
+현재 하나의 `Person` 인스턴스에 3개의 강한 참조가 있다.
+
+두 개의 변수에 `nil` 을 할당해서 두 개의 강한 참조가 깨지면, 하나의 강한 참조만 남고, `Person` 인스턴스는 메모리에서 해제되지 않는다.
+
+```swift
+reference1 = nil
+reference2 = nil
+```
+
+ARC는 `Person` 인스턴스가 더 이상 사용하지 않는 것이 명확해진 시점인 3번째와 마지막 강한 참조가 깨지기 전까지 `Person` 인스턴스를 메모리에서 해제하지 않는다.
+
+```swift
+reference3 = nil
+// Prints "John Appleseed is being deinitialized"
+```
+
+#### 클래스 인스턴스 간의 강한 순환 참조(Strong Reference Cycles Between Class Instances)
+위의 예제에서 ARC는 새로운 `Person` 인스턴스의 참조 횟수를 추적할 수 있고 `Person` 인스턴스가 더 이상 필요하지 않을 때 메모리에서 해제한다.
+
+
+
+---
+
 https://www.raywenderlich.com/134411/arc-memory-management-swift
 https://developer.apple.com/library/content/documentation/Swift/Conceptual/Swift_Programming_Language/AutomaticReferenceCounting.html
 http://njir.github.io/2015/03/19/memori-gwanriarc/index.html
 https://medium.com/@enricopiovesan/arc-swift-tutorial-d42dea53eddb
 https://stackoverflow.com/questions/31346518/how-to-work-with-automatic-reference-counting-arc
 
-***
-
 #### Weak, strong, unowned
 https://krakendev.io/blog/weak-and-unowned-references-in-swift
 
-***
 
 ### Core image
 #### Image crop app
-
-***
 
 ### Core data
 #### Shopping wish list app
@@ -229,12 +295,9 @@ NS Managed Objects를 database로 보낼 때 부르는 함수이다.
 7. 관련 메소드
 awakeFromInsert() - entity에서 해당 아이템을 생성하면 이 함수가 불려진다.
 
-***
 
 ### TDD practice
 #### Making calculator app with Test-Driven Development (TDD)
-
-***
 
 ### 객체지향 프로그래밍
 #### **Setter, Getter 이유**
@@ -251,24 +314,20 @@ http://qna.iamprogrammer.io/t/encapsulation-getter-setter/193
 - 상속성
 - 다형성
 
-
-***
-
 ### Protocol, Initialization, Extension
 #### Protocol
 
 #### Initialization
-초기화는 클래스, 구조체, 또는 열거형의 인스턴스를 사용하기 위한 준비 과정입니다. 이 과정은 해당 인스턴스의 각각의 저장된 속성의 초기값을 설정하는 것과 그 외의 다른 설정 또는 새 인스턴스를 사용하기 전에 필요한 초기화를 합니다. 이 초기화 과정을 이니셜라이저(initializer)를 정의함으로서 구현할 수 있습니다. 이니셜라이저는 특정 타입의 새 인스턴스를 만들때 호출될 수 있는 특수 메소드입니다. 
+초기화는 클래스, 구조체, 또는 열거형의 인스턴스를 사용하기 위한 준비 과정다. 이 과정은 해당 인스턴스의 각각의 저장된 속성의 초기값을 설정하는 것과 그 외의 다른 설정 또는 새 인스턴스를 사용하기 전에 필요한 초기화를 한다. 이 초기화 과정을 이니셜라이저(initializer)를 정의함으로서 구현할 수 있다. 이니셜라이저는 특정 타입의 새 인스턴스를 만들때 호출될 수 있는 특수 메소드이다. 
 
-다른 오브젝티브 C의 이니셜라이저와는 달리 스위프트의 이니셜라이저는 값을 반환하지 않습니다. 이니셜라이저의 주 역할은 새 인스턴스가 처음 사용되기 전에 잘못된 곳이 없이 초기화가 되었는지 보장하는 것입니다. 또한 클래스 타입의 인스턴스는 디이니셜라이저(deinitializer)를 정의 할 수 있습니다. 디이니셜라이저는 할당 해제되기 바로 직전에 맞춤 정리를 수행합니다. 디이니셜라이저에 대해 더 많은 정보를 원하시면 Deinitialization을 보세요.
+다른 오브젝티브 C의 이니셜라이저와는 달리 스위프트의 이니셜라이저는 값을 반환하지 않는다. 이니셜라이저의 주 역할은 새 인스턴스가 처음 사용되기 전에 잘못된 곳이 없이 초기화가 되었는지 보장하는 것이다. 또한 클래스 타입의 인스턴스는 디이니셜라이저(deinitializer)를 정의 할 수 있다. 디이니셜라이저는 할당 해제되기 바로 직전에 맞춤 정리를 수행한다. 
+(디이니셜라이저에 대해 더 많은 정보를 원하시면 Deinitialization을 보도록 한다.)
 
 **저장 속성에 초기값 설정하기**
 클래스와 구조체의 인스턴스가 생성될때에 맞춰서 인스턴스내의 저장된 속성은 적절한 초기값으로 설정이 되어야 합니다. 저장된 속성은 정해지지 않은 상태로 남아있을 수 없습니다. 이니셜라이저를 통해 저장 속성에 초기값을 설정하거나, 속성의 정의의 일부분으로서 기본 속성값을 지정 할 수 있습니다. 이 행동들은 뒤따르는 섹션에 설명되어 있습니다.
 >**NOTE**: 저장 속성에 기본값을 지정하거나, 이니셜라이저에서 초기값을 설정할 때, 어떠한 속성 감시자(observer)도 호출하지 않고 속성의 값이 직접 설정 됩니다.
 
 가장 기본적인 형태로 `init` 키워드를 사용하며, 파라메터가 없는 인스턴스 메소드의 형태입니다. 밑의 예제는 `Fahrenheit` 
-
-***
 
 
 ### Xcode 단축키
