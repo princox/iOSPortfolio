@@ -2,6 +2,7 @@
 
 
 >**Note:** Hi, my name is `Jeong Hoon Rhee`. I'm making some apps for my portfolio.
+
 > This is repository for my portfolio. If you have some issues or ideas just let me know. Thanks.
 
 
@@ -9,10 +10,10 @@
 - [ ] Refactoring(마틴 파울러) 책 읽고 정리
 - [ ] Core image
 - [ ] Core data
-- [ ] Parse
 - [ ] How to do TDD with Xcode (Testing tool practice)
 - [ ] Protocol, Initialization, Extension 복습
-- [ ] 
+
+
 http://swift.leantra.kr/#initialization
 
 면접질문 : 
@@ -255,7 +256,69 @@ reference3 = nil
 #### 클래스 인스턴스 간의 강한 순환 참조(Strong Reference Cycles Between Class Instances)
 위의 예제에서 ARC는 새로운 `Person` 인스턴스의 참조 횟수를 추적할 수 있고 `Person` 인스턴스가 더 이상 필요하지 않을 때 메모리에서 해제한다.
 
+하지만, 강한 참조가 없는 시점에 클래스의 인스턴스를 가져올 수 없는 코드 작성이 가능하다. 두 개의 클래스 인스턴스가 각각 다른 강한 참조를 가지고 있다면, 각 인스턴스는 다른 인스턴스가 살아남게 해줍니다. 이를 *강한 순환 참조(strong reference cycle)*라고 한다.
 
+강한 순환 참조를 발생시키는 예제가 있다. 아파트와 거주자에 대한 모델링 하는 *Person*, *Apartment*를 정의한다.
+
+```swift
+class Person {
+	let name: String
+	init(name: String) { self.name = name }
+	var apartment: Apartment?
+	deinit { print("\(name) is being deinitialized")}
+}
+```
+
+`Person` 인스턴스는 `String` 타입의 `name` 프로퍼티와 초기 값이 `nil`인 `apartment` 옵셔널 프로퍼티를 가지고 있다. 
+
+아파트에 항상 사람이 있는 것은 아니기 때문에, `apartment` 프로퍼티는 옵셔널이다.
+
+비슷하게, `Apartment` 인스턴스는 `String` 타입의 `unit` 프로퍼티와 초기값이 `nil`인 `tenant` 옵셔널 프로퍼티를 가지고 있다. 아파트가 항상 주민이 있는 것은 아니기 때문에 주인(tenant) 프로퍼티는 옵셔널이다.
+
+이러한 두 개의 클래스 모두 클래스의 인스턴스의 메모리가 해제된다는 사실을 출력하는 해제를 정의하고 있다. Person과 Apartment의 인스턴스가 예상한 대로 예상한대로 해제가 되는지 보도록 한다.
+
+다음 코드 일부(snippet)는 아래의 특정 `Apartment`와 `Person`인스턴스를 설정하기 위해, 옵셔널 타입의 두 개의 변수 `john`과 `unit4A`를 정의한다. 이런 두 개의 변수 모두 옵셔널이므로 초기값이 nil이다.
+
+```swift
+var john: Person?
+var unit4A: Apartment?
+```
+새로운 특정 `Person`인스턴스와 `Apartment`인스턴스를 생성할수 있고 이러한 새로운 인스턴스를 변수 `john`과 `unit4A`에 할당 할 수 있다.
+
+```swift
+john = Person(name: "John Appleseed")
+unit4A = Apartment(unit: "4A")
+```
+
+여기에서 어떻게 두 개의 인스턴스를 생성하고 할당한 후에 강한 참조가 되는 것을 보도록 하자. `john` 변수는 이제 새로운 `Person` 인스턴스의 강한 참조를 가지고 있고, `unit4A` 변수는 새로운 `Apartment` 인스턴스의 강한 참조를 가지고 있다.
+
+![reference cycle](./imgs/referenceCycle01.png)
+이제 두 개의 인스턴스를 사람(person)은 아파트(apartment)를 가지고 있고, 아파트는 주인을 가지고 있도록 서로 연결할 수 있다. 느낌표(!) 표시는 인스턴스 내부에 저장된 `john`과 `unit4A` 옵셔널 변수를 언래핑하고 접근할 때 사용하며 이런 인스턴스의 프로퍼티를 설정할 수 있다.
+
+![reference cycle](./imgs/referenceCycle02.png)
+이런 두 개의 인스턴스를 연결하면 강한 순환 참조가 만들어진다. Person 인스턴스는 이제 Apartment 인스턴스에 강한 참조를 가지고 있고, Apartment 인스턴스는 Person 인스턴스에 강한 참조를 가지고 있다. 그러므로 john과 unit4A 변수에 의해 강한 참조를 가지고 있을 때 참조 갯수는 0이 되지 않고 인스턴스들은 ARC에 의해서 메모리가 해제되지 않습니다.
+
+```swift
+john = nil
+unit4A = nil
+```
+
+이러한 두 변수들은 nil로 설정해도 해제는 호출되지 않는다. 강한 순환 참조는 `Person`과 `Apartment` 인스턴스가 메모리에서 해제되는 것을 막으며, 앱에서 메모리 누수가 생기는 원인이 된다.
+
+여기에서, `john`과 `unit4A` 변수에 nil을 설정한 후에 강한 참조가 되는 것을 지켜보자.
+
+![reference cycle](./imgs/referenceCycle03.png)
+
+
+`Person` 인스턴스와 `Apartment` 인스턴스간의 강한 참조가 남아있고 깨뜨릴 수 없다.
+
+#### 약한 참조
+*약한 참조(weak reference)*는 참조하는 인스턴스를 강하게 유지하지 않는 참조이고, 참조된 인스턴ㅅ를 정리하도록 ARC를 멈추지 않는다. 이런 동작은 강한 순환 참조가 되는 것
+을 막아준다. **weak** 참조는 프로퍼티나 변수 선언 앞에 `weak` 키워드를 사용한다.
+
+**weak** 참조는 참조하고 있는 인스턴스를 강하게 유지하지 않기 때문에, **weak** 참조로 참조하고 있는 동안에 인스턴스가 메모리 해제되는 것이 가능하다. 그러므로 참조하는 인스턴스가 메모리에서 해제되면 ARC는 자동적으로 **weak** 참조를 실시간으로 `nil`로 값이 변경되는 것이 필요하기 때문에 언제나 상수보다는 옵셔널 타입의 변수로 선언되어야 한다.
+
+weak 참조에서 기존 값을 확인할 수 있으며, 다른 옵셔널 값과 마찬가지로 더 이상 존재하지 않는 유효하지 않는 인스턴스를 참조하지 않을 것이다.
 
 ---
 
@@ -295,6 +358,9 @@ NS Managed Objects를 database로 보낼 때 부르는 함수이다.
 7. 관련 메소드
 awakeFromInsert() - entity에서 해당 아이템을 생성하면 이 함수가 불려진다.
 
+#### FRC (NSFetchedResultsController)
+
+
 
 ### TDD practice
 #### Making calculator app with Test-Driven Development (TDD)
@@ -330,5 +396,24 @@ http://qna.iamprogrammer.io/t/encapsulation-getter-setter/193
 가장 기본적인 형태로 `init` 키워드를 사용하며, 파라메터가 없는 인스턴스 메소드의 형태입니다. 밑의 예제는 `Fahrenheit` 
 
 
+### Swift 4, Swift 3
+
+
 ### Xcode 단축키
+
+`command + f` -> 텍스트 찾기
+`command + n` -> 새로운 파일 생성
+`command + t` -> 새로운 탭 생성
+`command + w` -> 탭 닫기
+
+---
 option + 클릭 -> 스토리보드 오른쪽 옆에 assistant editor 화면으로 코드가 분할하여 뜬다.
+option + 메소드 클릭 or 오른쪽 사이드 창에서 ? 표시 -> 해당 메소드에 해당 설명을 보여준다.
+command + shift + K -> Clean Project
+commnad + R -> Run
+ctrl + f, b, u, n -> 각각 화살표 오른쪽(forward), 왼쪽(back), 위(up), 아래(down)
+option + command + Enter -> 어시스턴트 에디터
+shift + command + o (영어 오) -> 빨리 열기
+command + 0 // shift + command + y // option + command + 0  : 각각 왼쪽 사이드창, 아래 사이드창, 오른쪽 사이드창
+ctrl + space -> 자동 완성
+ctrl + i -> 자동 줄 정리
