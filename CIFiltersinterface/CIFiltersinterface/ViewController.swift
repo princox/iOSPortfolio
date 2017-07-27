@@ -13,7 +13,7 @@ import CoreImage
 // 그 후 구현해야 하는 메소드를 구현한다.
 
 class ViewController: UIViewController,  UIPickerViewDelegate, UIPickerViewDataSource {
-
+    
     
     @IBOutlet weak var filterPicker: UIPickerView!
     @IBOutlet weak var textField1: UITextField!
@@ -27,8 +27,6 @@ class ViewController: UIViewController,  UIPickerViewDelegate, UIPickerViewDataS
     var listOfFilterNames = [String]()
     var chosenFilter = CIFilter()
     var chosenFilterName = ""
-    
-    
     
     
     override func viewDidLoad() {
@@ -45,21 +43,63 @@ class ViewController: UIViewController,  UIPickerViewDelegate, UIPickerViewDataS
         //if let으로 해도 되지만 확실히 있다는 것을 알기 때문에 강제 언랩핑
         displayImage = CIImage(image: myProfileImage)!
         
-        
-        listOfFilterNames = ["first", "second", "third"]
+        //        listOfFilterNames = ["first", "second", "third"]
+        displayFilterNames()
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
+    
     @IBAction func applyFilterAction(_ sender: UIButton) {
+        
+        
+        /*      옛날코드 지우고 싶으면 지울 것
+         chosenFilter = CIFilter(name: "CISepiaTone")! // (CISepiaTone은 CIfilter가 가지고 있음) 필터를 만들고
+         chosenFilter.setValue(displayImage, forKey: "inputImage")
+         
+         let params : [String:Any] = [kCIInputImageKey: displayImage, kCIInputIntensityKey: 0.5]
+         
+         chosenFilter = CIFilter(name: "CISepiaTone", withInputParameters: params)!
+         
+         if let outputImage = chosenFilter.outputImage {
+         imgView.image = UIImage(ciImage: outputImage)
+         }
+         
+         chosenFilter = CIFilter(name: "CISepiaTone")!
+         chosenFilter.setValue(displayImage, forKey: "inputImage")
+         
+         if let inputIntensity = Double(textField1.text!) {
+         chosenFilter.setValue(inputIntensity, forKey: "inputIntensity")
+         }
+         
+         if let outputImage = chosenFilter.outputImage {
+         imgView.image = UIImage(ciImage: outputImage)
+         }
+         */
+        
+        var input1 = 0.0
+        var input2 = 0.0
+        var input3 = 0.0
+        var input4 = 0.0
+        
+        if let input = Double(textField1.text!) {
+            input1 = input
+        }
+    }
+    
+    func processFilter(input1: Double, input2: Double, input3: Double, input4: Double) {
         
     }
     
-    
     // 아래 4개의 메소드를 써서 에러를 없애자.
+    
+    func displayFilterNames() {
+        let filterNameArray = CIFilter.filterNames(inCategories: ["CICategoryBlur"])
+        print(filterNameArray)
+        let blurFilter = CIFilter(name: "CIBoxBlur")
+    }
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         // 1개의 줄만 리턴
