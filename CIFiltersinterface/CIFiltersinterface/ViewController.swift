@@ -27,6 +27,7 @@ class ViewController: UIViewController,  UIPickerViewDelegate, UIPickerViewDataS
     var listOfFilterNames = [String]()
     var chosenFilter = CIFilter()
     var chosenFilterName = ""
+    // 비어있기 때문에 강제 언랩핑하면 문제가 생길 수 있음.
     
     
     override func viewDidLoad() {
