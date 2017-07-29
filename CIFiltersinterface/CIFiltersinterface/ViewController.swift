@@ -113,6 +113,10 @@ class ViewController: UIViewController,  UIPickerViewDelegate, UIPickerViewDataS
         switch chosenFilterName {
         case "CIBoxBlur":
             chosenFilter.setValue(input1, forKey: "inputRadius")
+        case "CIZoomBlur":
+            let centerVector = CIVector(x: self.displayImage.extent.midX, y: self.displayImage.extent.midY)
+            chosenFilter.setValue(centerVector, forKey: "inputCenter")
+            chosenFilter.setValue(input1, forKey: "inputAmount")
         default:
             break
         }
