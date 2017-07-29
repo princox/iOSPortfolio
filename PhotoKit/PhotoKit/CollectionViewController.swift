@@ -29,7 +29,9 @@ class CollectionViewController: UICollectionViewController {
         return cell
     }
     
-    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        (segue.destination as! ViewController).image = (sender as! CollectionViewCell).ImageView.image!
+    }
     
 }
 
