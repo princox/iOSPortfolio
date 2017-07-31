@@ -24,7 +24,7 @@ class ViewController: UIViewController,  UIPickerViewDelegate, UIPickerViewDataS
     
     let myProfileImage = #imageLiteral(resourceName: "profile")
     var displayImage = CIImage()
-    var listOfFilterNames = ["CIBoxBlur", "CIZoomBlur"]
+    var listOfFilterNames = ["CIBoxBlur", "CIZoomBlur", "CIColorMatrix", "CIHueAdjust", "CIToneCurve"]
     var chosenFilter = CIFilter()
     var chosenFilterName = ""
     // 비어있기 때문에 강제 언랩핑하면 문제가 생길 수 있음.
@@ -83,22 +83,22 @@ class ViewController: UIViewController,  UIPickerViewDelegate, UIPickerViewDataS
         
         chosenFilter = filter
         
-        var input1 = 0.0
-        var input2 = 0.0
-        var input3 = 0.0
-        var input4 = 0.0
+        var input1: CGFloat = 0.0
+        var input2: CGFloat = 0.0
+        var input3: CGFloat = 0.0
+        var input4: CGFloat = 0.0
         
         if let input = Double(textField1.text!) {
-            input1 = input
+            input1 = CGFloat(input)
         }
         if let input = Double(textField2.text!) {
-            input2 = input
+            input2 = CGFloat(input)
         }
         if let input = Double(textField3.text!) {
-            input3 = input
+            input3 = CGFloat(input)
         }
         if let input = Double(textField4.text!) {
-            input4 = input
+            input4 = CGFloat(input)
         }
         processFilter(input1: input1, input2: input2, input3: input3, input4: input4)
         
@@ -108,7 +108,7 @@ class ViewController: UIViewController,  UIPickerViewDelegate, UIPickerViewDataS
         }
     }
     
-    func processFilter(input1: Double, input2: Double, input3: Double, input4: Double) {
+    func processFilter(input1: CGFloat, input2: CGFloat, input3: CGFloat, input4: CGFloat) {
         chosenFilter.setValue(displayImage, forKey: "inputImage")
         switch chosenFilterName {
         case "CIBoxBlur":
@@ -117,6 +117,26 @@ class ViewController: UIViewController,  UIPickerViewDelegate, UIPickerViewDataS
             let centerVector = CIVector(x: self.displayImage.extent.midX, y: self.displayImage.extent.midY)
             chosenFilter.setValue(centerVector, forKey: "inputCenter")
             chosenFilter.setValue(input1, forKey: "inputAmount")
+        case "CIColorMatrix":
+            let rVector = CIVector(x: input1, y: 0, z: 0, w: 0)
+            let gVector = CIVector(x: 0, y: input2, z: 0, w: 0)
+            let bVector = CIVector(x: 0, y: 0, z: input3, w: 0)
+            let aVector = CIVector(x: 0, y: 0, z: 0, w: input4)
+            chosenFilter.setValue(rVector, forKey: "inputRVector")
+            chosenFilter.setValue(gVector, forKey: "inputGVector")
+            chosenFilter.setValue(bVector, forKey: "inputBVector")
+            chosenFilter.setValue(aVector, forKey: "inputAVector")
+        case "CIHueAdjust":
+            chosenFilter.setValue(input1, forKey: "inputAngle")
+        case "CIToneCurve":
+            let point0 = CIVector(x: input1, y:input1)
+            let point1 = CIVector(x: input2, y:input2)
+            let point2 = CIVector(x: input3, y:input3)
+            let point3 = CIVector(x: input4, y:input4)
+            chosenFilter.setValue(point0, forKey: "inputPoint0")
+            chosenFilter.setValue(point1, forKey: "inputPoint1")
+            chosenFilter.setValue(point2, forKey: "inputPoint2")
+            chosenFilter.setValue(point3, forKey: "inputPoint3")
         default:
             break
         }
